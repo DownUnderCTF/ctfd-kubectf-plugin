@@ -1,10 +1,13 @@
 import math
+from os import path
 
 from CTFd.models import Challenges, Solves, db
 from CTFd.plugins.challenges import BaseChallenge
 from CTFd.utils.modes import get_model
 
 from .routes import blueprint
+
+PLUGIN_FOLDER_NAME = path.basename(path.dirname(__file__))
 
 
 class KubeChallenge(Challenges):
@@ -28,17 +31,17 @@ class KubeChallengeType(BaseChallenge):
     id = "kubectf"  # Unique identifier used to register challenges
     name = "kubectf"  # Name of a challenge type
     templates = {  # Templates used for each aspect of challenge editing & viewing
-        "create": "/plugins/kube_ctf/templates/create.html",
-        "update": "/plugins/kube_ctf/templates/update.html",
-        "view": "/plugins/kube_ctf/assets/view.html",
+        "create": f"/plugins/{PLUGIN_FOLDER_NAME}/templates/create.html",
+        "update": f"/plugins/{PLUGIN_FOLDER_NAME}/templates/update.html",
+        "view": f"/plugins/{PLUGIN_FOLDER_NAME}/assets/view.html",
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        "create": "/plugins/kube_ctf/assets/create.js",
-        "update": "/plugins/kube_ctf/assets/update.js",
-        "view": "/plugins/kube_ctf/assets/view.js",
+        "create": f"/plugins/{PLUGIN_FOLDER_NAME}/assets/create.js",
+        "update": f"/plugins/{PLUGIN_FOLDER_NAME}/assets/update.js",
+        "view": f"/plugins/{PLUGIN_FOLDER_NAME}/assets/view.js",
     }
     # Route at which files are accessible. This must be registered using register_plugin_assets_directory()
-    route = "/plugins/kube_ctf/assets/"
+    route = f"/plugins/{PLUGIN_FOLDER_NAME}/assets/"
     # Blueprint used to access the static_folder directory.
     blueprint = blueprint
     challenge_model = KubeChallenge
