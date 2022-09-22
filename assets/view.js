@@ -116,12 +116,10 @@ function createDeployment(btn) {
         data: JSON.stringify({action: "create"}),
         contentType: "application/json",
         success: function(data) {
-            let challengeCheck = setTimeout(() => {
-                createChallengeLinkElement(data, alert);
-                toggleChallengeUpdate();
-                toggleChallengeCreate();
-                toggleLoading(btn);
-            }, 15000)
+	    createChallengeLinkElement(data, alert);
+	    toggleChallengeUpdate();
+	    toggleChallengeCreate();
+	    toggleLoading(btn);
         },
         error: function(error) {
             alert.append(error.responseJSON.error || error.responseJSON.message)
