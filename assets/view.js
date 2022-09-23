@@ -73,14 +73,18 @@ function calculateExpiry(date) {
 }
 
 function createChallengeLinkElement(data, parent) {
-    var expires = document.createElement('span');
-    expires.textContent = "Expires in " + calculateExpiry(new Date(data.deployment.expires)) + " minutes.";
-    var link = document.createElement('a');
-    link.href = 'https://' + data.deployment.host;
-    link.textContent = data.deployment.host;
-    parent.append(expires);
-    parent.append(document.createElement('br'));
-    parent.append(link);
+    let expiry = calculateExpiry(new Date(data.expires));
+
+    if (expiry > 0) {
+        var expires = document.createElement('span');
+        expires.textContent = "Expires in " + calculateExpiry(new Date(data.deployment.expires)) + " minutes.";
+        var link = document.createElement('a');
+        link.href = 'https://' + data.deployment.host;
+        link.textContent = data.deployment.host;
+        parent.append(expires);
+        parent.append(document.createElement('br'));
+        parent.append(link);
+    } 
 }
 
 function awaitChallengeReady(data) {
