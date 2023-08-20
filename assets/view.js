@@ -73,7 +73,8 @@ function calculateExpiry(date) {
 }
 
 function createChallengeLinkElement(data, parent) {
-    let expiry = calculateExpiry(new Date(data.expires));
+    let expiry = calculateExpiry(new Date(data.deployment.expires));
+    console.log(data)
 
     if (expiry > 0) {
         var expires = document.createElement('span');
@@ -98,6 +99,7 @@ function getDeployment(deployment) {
         type: "GET",
         url: "api/kube_ctf/" + deployment,
         success: function(data) {
+
             createChallengeLinkElement(data, alert);
             toggleChallengeUpdate();
         },
