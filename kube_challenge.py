@@ -2,8 +2,9 @@ import math
 from os import path
 
 from CTFd.models import Challenges, Solves, db
-from CTFd.plugins.challenges import BaseChallenge
+from CTFd.plugins.dynamic_challenges import DynamicValueChallenge
 from CTFd.utils.modes import get_model
+from CTFd.plugins.dynamic_challenges.decay import DECAY_FUNCTIONS, logarithmic
 
 from .routes import blueprint
 
@@ -20,14 +21,15 @@ class KubeChallenge(Challenges):
     initial = db.Column(db.Integer, default=0)
     minimum = db.Column(db.Integer, default=0)
     decay = db.Column(db.Integer, default=0)
+    function = db.Column(db.String(32), default="logarithmic_custom")
 
     def __init__(self, *args, **kwargs):
         super(KubeChallenge, self).__init__(**kwargs)
         self.template_name = kwargs["template_name"]
-        self.initial = kwargs["value"]
+        self.value = kwargs["initial"]
 
 
-class KubeChallengeType(BaseChallenge):
+class KubeChallengeType(DynamicValueChallenge):
     id = "kubectf"  # Unique identifier used to register challenges
     name = "kubectf"  # Name of a challenge type
     templates = {  # Templates used for each aspect of challenge editing & viewing
@@ -46,37 +48,6 @@ class KubeChallengeType(BaseChallenge):
     blueprint = blueprint
     challenge_model = KubeChallenge
 
-    #  Taken from the Dynamic scoring challenge
-    @classmethod
-    def calculate_value(cls, challenge):
-        Model = get_model()
-
-        solve_count = (Solves.query.join(
-            Model, Solves.account_id == Model.id).filter(
-                Solves.challenge_id == challenge.id,
-                Model.hidden == False,
-                Model.banned == False,
-            ).count())
-
-        # If the solve count is 0 we shouldn't manipulate the solve count to
-        # let the math update back to normal
-        if solve_count != 0:
-            # We subtract -1 to allow the first solver to get max point value
-            solve_count -= 1
-
-        # It is important that this calculation takes into account floats.
-        # Hence this file uses from __future__ import division
-        value = (((challenge.minimum - challenge.initial) /
-                  (challenge.decay**2)) * (solve_count**2)) + challenge.initial
-
-        value = math.ceil(value)
-
-        if value < challenge.minimum:
-            value = challenge.minimum
-
-        challenge.value = value
-        db.session.commit()
-        return challenge
 
     @classmethod
     def read(cls, challenge):
