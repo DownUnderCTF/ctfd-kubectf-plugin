@@ -79,12 +79,22 @@ function createChallengeLinkElement(data, parent) {
     if (expiry > 0) {
         var expires = document.createElement('span');
         expires.textContent = "Expires in " + calculateExpiry(new Date(data.deployment.expires)) + " minutes.";
-        var link = document.createElement('a');
-        link.href = 'https://' + data.deployment.host;
-        link.textContent = data.deployment.host;
+
+        // TODO: remove this jank and have a proper way to determine how to connect to chals
         parent.append(expires);
         parent.append(document.createElement('br'));
-        parent.append(link);
+        if (data.deployment.host.includes("pwn")) {
+            var conn_string = document.createElement('span');
+            conn_string.textContent = `openssl s_client -connect ${data.deployment.host}:443`
+            parent.append(conn_string);
+
+        } else {
+            var link = document.createElement('a');
+            link.href = 'https://' + data.deployment.host;
+            link.textContent = data.deployment.host;
+            parent.append(link);
+        }
+        
     } 
 }
 
