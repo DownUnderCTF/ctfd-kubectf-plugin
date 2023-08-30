@@ -8,6 +8,7 @@ from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.decorators import admins_only, ratelimit
 from CTFd.utils.logging import log
 from CTFd.utils.user import get_current_user
+from CTFd.utils.decorators import during_ctf_time_only
 from flask import Blueprint, render_template, request
 
 from .config import CHALLENGE_REGEX, CONFIG_HOST, CONFIG_SECRET
@@ -28,6 +29,7 @@ def register_app(app):
 
 @blueprint.route('/api/kube_ctf/<challenge>', methods=['GET', 'POST'])
 @bypass_csrf_protection
+@during_ctf_time_only
 @ratelimit(method='GET', limit=15, interval=60, key_type='user', key_prefix='rl_kctfget')
 @ratelimit(method='POST', limit=4, interval=60, key_type='user', key_prefix='rl_kctfpost')
 def get_challenge(challenge):
