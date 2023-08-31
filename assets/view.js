@@ -85,7 +85,7 @@ function createChallengeLinkElement(data, parent) {
         parent.append(document.createElement('br'));
         if (data.deployment.host.includes("pwn")) {
             var conn_string = document.createElement('span');
-            conn_string.textContent = `openssl s_client -connect ${data.deployment.host}:443`
+            conn_string.textContent = `openssl s_client -quiet -connect ${data.deployment.host}:443`
             parent.append(conn_string);
 
         } else {
