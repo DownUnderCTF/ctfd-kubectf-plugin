@@ -74,7 +74,6 @@ function calculateExpiry(date) {
 
 function createChallengeLinkElement(data, parent) {
     let expiry = calculateExpiry(new Date(data.deployment.expires));
-    console.log(data)
 
     if (expiry > 0) {
         var expires = document.createElement('span');
@@ -89,9 +88,24 @@ function createChallengeLinkElement(data, parent) {
             parent.append(conn_string);
 
         } else {
-            var link = document.createElement('a');
+            let link = document.createElement('a');
             link.href = 'https://' + data.deployment.host;
             link.textContent = data.deployment.host;
+            link.target = '_blank'
+            parent.append(link);
+        }
+
+        // Add admin bot link if challenge is tagged with bot
+        const chalTag = CTFd.lib.$(".challenge-tag").last().text();
+        if (chalTag == "bot") {
+            parent.append(document.createElement("br"))
+            let link = document.createElement('a');
+            const subdomains = new URL(`https://${data.deployment.host}`).hostname.split('.')
+            const unique = `${subdomains.shift(1)}-bot`;
+            const host = `https://${unique}.${subdomains.join('.')}`
+            link.href =  host;
+            link.target = '_blank'
+            link.textContent = "Admin Bot";
             parent.append(link);
         }
         
